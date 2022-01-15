@@ -45,6 +45,7 @@ class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView
     init {
         highlightColor = Color.TRANSPARENT
         movementMethod = LinkTouchMovementMethod()
+        notConsumeTouchEvent()
     }
 
     override fun setText(text: CharSequence, type: BufferType) {

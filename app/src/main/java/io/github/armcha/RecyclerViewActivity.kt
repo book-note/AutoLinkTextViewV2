@@ -33,7 +33,7 @@ class RecyclerViewActivity : AppCompatActivity() {
             override fun getItemCount() = 200
 
             override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
+                val cardView = holder.itemView.cardView
                 val autoLinkTextView = holder.itemView.autoLinkTextView
                 val context = holder.itemView.context
                 val custom = MODE_CUSTOM("\\sAndroid\\b")
@@ -70,11 +70,29 @@ class RecyclerViewActivity : AppCompatActivity() {
 
                 autoLinkTextView.text = getString(text)
 
+
                 autoLinkTextView.onAutoLinkClick {
                     val message = if (it.originalText == it.transformedText) it.originalText
                     else "Original text - ${it.originalText} \n\nTransformed text - ${it.transformedText}"
                     val url = if (it.mode is MODE_URL) it.originalText else null
                     showDialog(it.mode.modeName, message, url)
+                }
+
+                cardView.setOnLongClickListener {
+                    Toast.makeText(
+                        this@RecyclerViewActivity,
+                        "cardView.setOnLongClickListener",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    true
+                }
+
+                cardView.setOnClickListener {
+                    Toast.makeText(
+                        this@RecyclerViewActivity,
+                        "cardView.setOnClickListener",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }

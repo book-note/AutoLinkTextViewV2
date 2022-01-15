@@ -10,14 +10,20 @@ internal class LinkTouchMovementMethod : LinkMovementMethod() {
 
     private var pressedSpan: TouchableSpan? = null
 
-    override fun onTouchEvent(textView: TextView, spannable: Spannable, event: MotionEvent): Boolean {
+    override fun onTouchEvent(
+        textView: TextView,
+        spannable: Spannable,
+        event: MotionEvent
+    ): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 pressedSpan = getPressedSpan(textView, spannable, event)
                 if (pressedSpan != null) {
                     pressedSpan?.isPressed = true
-                    Selection.setSelection(spannable, spannable.getSpanStart(pressedSpan),
-                            spannable.getSpanEnd(pressedSpan))
+                    Selection.setSelection(
+                        spannable, spannable.getSpanStart(pressedSpan),
+                        spannable.getSpanEnd(pressedSpan)
+                    )
                 }
             }
             MotionEvent.ACTION_MOVE -> {
@@ -37,10 +43,14 @@ internal class LinkTouchMovementMethod : LinkMovementMethod() {
                 Selection.removeSelection(spannable)
             }
         }
-        return true
+        return getPressedSpan(textView, spannable, event) != null
     }
 
-    private fun getPressedSpan(textView: TextView, spannable: Spannable, event: MotionEvent): TouchableSpan? {
+    private fun getPressedSpan(
+        textView: TextView,
+        spannable: Spannable,
+        event: MotionEvent
+    ): TouchableSpan? {
 
         var x = event.x.toInt()
         var y = event.y.toInt()
