@@ -3,9 +3,9 @@ package io.github.armcha.autolink
 import android.util.Patterns
 import java.util.regex.Pattern
 
-internal val URL_PATTERN = Pattern.compile("(^|[\\s\\S])" +
-        "((https?://|www\\.|pic\\.)[-\\w;/?:@&=+$\\|\\_.!~*\\|'()\\[\\]%#,☺]+[\\w/#](\\(\\))?)" +
-        "(?=$|[\\s\\S])")
+internal val URL_PATTERN = Pattern.compile(
+        "((https?://|www\\.)[-\\w;/?:@&=+$\\|\\_.!~*\\|'()\\[\\]%#,☺]+[\\w/#](\\(\\))?)" )
+
 internal val PHONE_PATTERN: Pattern = Patterns.PHONE
 internal val EMAIL_PATTERN: Pattern = Patterns.EMAIL_ADDRESS
 internal val MENTION_PATTERN: Pattern = Pattern.compile("(?:^|\\s|$|[.])@[\\p{L}0-9_]*")

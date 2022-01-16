@@ -23,26 +23,26 @@ class StaticTextActivity : AppCompatActivity() {
 
         val custom = MODE_CUSTOM("\\sAndroid\\b", "\\smobile\\b")
         autoLinkTextView.addAutoLinkMode(
-            MODE_HASHTAG,
-            MODE_EMAIL,
-            MODE_URL,
-            MODE_PHONE,
-            custom,
-            MODE_MENTION
+            MODE_URL
         )
 
-        autoLinkTextView.addUrlTransformations(
-            "https://en.wikipedia.org/wiki/Wear_OS" to "Wear OS",
-            "https://en.wikipedia.org/wiki/Fire_OS" to "FIRE"
-        )
+//        autoLinkTextView.addUrlTransformations(
+//            "https://en.wikipedia.org/wiki/Wear_OS" to "Wear OS",
+//            "https://en.wikipedia.org/wiki/Fire_OS" to "FIRE"
+//        )
+//
+//        autoLinkTextView.attachUrlProcessor {
+//            when {
+//                it.contains("google") -> "Google"
+//                it.contains("github") -> "Github"
+//                else -> it
+//            }
+//        }
 
-        autoLinkTextView.attachUrlProcessor {
-            when {
-                it.contains("google") -> "Google"
-                it.contains("github") -> "Github"
-                else -> it
-            }
-        }
+        val str1 = "\u200D\u200D\u200D\u200Dhttps://www.baidu.com\u200D\u200D\u200D\u200D\u200D\u200D 好好睡据占据句句 https://www.baidu.com 321 呵呵 https://www.baidu.com"
+        val str2 = ":https://\u200D\u200Dwww.baidu.com\n" +
+                "https://\u200D\u200Dwww.baidu.com\n" +
+                "https://\u200D\u200Dwww.baidu.com"
 
         autoLinkTextView.addSpan(MODE_URL, StyleSpan(Typeface.ITALIC), UnderlineSpan())
         autoLinkTextView.addSpan(MODE_HASHTAG, UnderlineSpan(), TypefaceSpan("monospace"))
@@ -53,7 +53,7 @@ class StaticTextActivity : AppCompatActivity() {
         autoLinkTextView.customModeColor = ContextCompat.getColor(this, R.color.color1)
         autoLinkTextView.mentionModeColor = ContextCompat.getColor(this, R.color.color6)
         autoLinkTextView.emailModeColor = ContextCompat.getColor(this, R.color.colorPrimary)
-        autoLinkTextView.text = getString(R.string.android_text)
+        autoLinkTextView.text = str2
 
         autoLinkTextView.onAutoLinkClick {
             val message = if (it.originalText == it.transformedText) it.originalText

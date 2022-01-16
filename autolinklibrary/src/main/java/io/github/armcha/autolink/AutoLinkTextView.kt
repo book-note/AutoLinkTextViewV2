@@ -149,9 +149,6 @@ class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView
                         else -> {
                             val isUrl = it is MODE_URL
                             if (isUrl) {
-                                if (startPoint > 0) {
-                                    startPoint += 1
-                                }
                                 group = group.trimStart()
                                 if (urlProcessor != null) {
                                     val transformedUrl = urlProcessor?.invoke(group) ?: group
@@ -203,14 +200,14 @@ class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView
                 action == MotionEvent.ACTION_DOWN
             ) {
                 val link = getPressedSpan(event, v)
-                if (link.isNotEmpty()) {
+                if (link != null) {
                     if (action == MotionEvent.ACTION_UP) {
-                        link[0].onClick(v)
+                        link.onClick(v)
                     } else if (action == MotionEvent.ACTION_DOWN) {
                         Selection.setSelection(
                             spannable,
-                            spannable.getSpanStart(link[0]),
-                            spannable.getSpanEnd(link[0])
+                            spannable.getSpanStart(link),
+                            spannable.getSpanEnd(link)
                         )
                     }
                     return true
@@ -224,7 +221,7 @@ class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView
         private fun getPressedSpan(
             event: MotionEvent,
             textView: TextView
-        ): Array<out TouchableSpan> {
+        ): TouchableSpan? {
             var x = event.x.toInt()
             var y = event.y.toInt()
             x -= textView.totalPaddingLeft
@@ -232,12 +229,16 @@ class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView
             x += textView.scrollX
             y += textView.scrollY
             val layout = textView.layout
-            val line = layout.getLineForVertical(y)
-            val off = layout.getOffsetForHorizontal(line, x.toFloat())
+            val verticalLine = layout.getLineForVertical(y)
+            val horizontalOffset = layout.getOffsetForHorizontal(verticalLine, x.toFloat())
+            val touchLineWidth = layout.getLineWidth(verticalLine)
+            if (x > touchLineWidth) {
+                return null
+            }
             return spannable.getSpans(
-                off, off,
+                horizontalOffset, horizontalOffset,
                 TouchableSpan::class.java
-            )
+            ).getOrNull(0)
         }
     }
 }
