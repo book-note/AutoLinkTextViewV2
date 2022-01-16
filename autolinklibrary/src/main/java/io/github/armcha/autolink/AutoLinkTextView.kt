@@ -2,19 +2,12 @@ package io.github.armcha.autolink
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Typeface
-import android.graphics.Typeface.BOLD
-import android.os.Handler
 import android.text.DynamicLayout
-import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-import android.text.Spanned.SPAN_INCLUSIVE_INCLUSIVE
 import android.text.StaticLayout
 import android.text.style.CharacterStyle
-import android.text.style.ClickableSpan
-import android.text.style.StyleSpan
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import java.lang.reflect.Field
@@ -77,11 +70,10 @@ class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView
         urlProcessor = processor
     }
 
-    private fun makeSpannableString(text: CharSequence): SpannableString {
+    private fun makeSpannableString(text: CharSequence): SpannableStringBuilder {
 
         val autoLinkItems = matchedRanges(text)
-        val transformedText = transformLinks(text, autoLinkItems)
-        val spannableString = SpannableString(transformedText)
+        val spannableBuilder = transformLinks(text, autoLinkItems)
 
         for (autoLinkItem in autoLinkItems) {
             val mode = autoLinkItem.mode
@@ -93,39 +85,45 @@ class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView
                 }
             }
 
-            spannableString.addSpan(clickableSpan, autoLinkItem)
+            spannableBuilder.addSpan(clickableSpan, autoLinkItem)
             spanMap[mode]?.forEach {
-                spannableString.addSpan(CharacterStyle.wrap(it), autoLinkItem)
+                spannableBuilder.addSpan(CharacterStyle.wrap(it), autoLinkItem)
             }
         }
 
-        return spannableString
+        return spannableBuilder
     }
 
-    private fun transformLinks(text: CharSequence, autoLinkItems: List<AutoLinkItem>): String {
+    private fun transformLinks(
+        text: CharSequence,
+        autoLinkItems: List<AutoLinkItem>
+    ): SpannableStringBuilder {
+        val spannableBuilder = SpannableStringBuilder(text)
         if (transformations.isEmpty())
-            return text.toString()
-
-        val stringBuilder = StringBuilder(text)
+            return spannableBuilder
         var shift = 0
 
         autoLinkItems
-                .sortedBy { it.startPoint }
-                .forEach {
-                    if (it.mode is MODE_URL && it.originalText != it.transformedText) {
-                        val originalTextLength = it.originalText.length
-                        val transformedTextLength = it.transformedText.length
-                        val diff = originalTextLength - transformedTextLength
-                        shift += diff
-                        it.startPoint = it.startPoint - shift + diff
-                        it.endPoint = it.startPoint + transformedTextLength
-                        stringBuilder.replace(it.startPoint, it.startPoint + originalTextLength, it.transformedText)
-                    } else if (shift > 0) {
-                        it.startPoint = it.startPoint - shift
-                        it.endPoint = it.startPoint + it.originalText.length
-                    }
+            .sortedBy { it.startPoint }
+            .forEach {
+                if (it.mode is MODE_URL && it.originalText != it.transformedText) {
+                    val originalTextLength = it.originalText.length
+                    val transformedTextLength = it.transformedText.length
+                    val diff = originalTextLength - transformedTextLength
+                    shift += diff
+                    it.startPoint = it.startPoint - shift + diff
+                    it.endPoint = it.startPoint + transformedTextLength
+                    spannableBuilder.replace(
+                        it.startPoint,
+                        it.startPoint + originalTextLength,
+                        it.transformedText
+                    )
+                } else if (shift > 0) {
+                    it.startPoint = it.startPoint - shift
+                    it.endPoint = it.startPoint + it.originalText.length
                 }
-        return stringBuilder.toString()
+            }
+        return spannableBuilder
     }
 
     private fun matchedRanges(text: CharSequence): List<AutoLinkItem> {
@@ -164,8 +162,10 @@ class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView
                             } else {
                                 group
                             }
-                            val item = AutoLinkItem(startPoint, endPoint, group,
-                                    transformedText = matchedText, mode = it)
+                            val item = AutoLinkItem(
+                                startPoint, endPoint, group,
+                                transformedText = matchedText, mode = it
+                            )
                             autoLinkItems.add(item)
                         }
                     }
@@ -175,7 +175,7 @@ class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView
         return autoLinkItems
     }
 
-    private fun SpannableString.addSpan(span: Any, autoLinkItem: AutoLinkItem) {
+    private fun SpannableStringBuilder.addSpan(span: Any, autoLinkItem: AutoLinkItem) {
         setSpan(span, autoLinkItem.startPoint, autoLinkItem.endPoint, SPAN_EXCLUSIVE_EXCLUSIVE)
     }
 

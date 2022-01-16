@@ -1,7 +1,12 @@
 package io.github.armcha
 
+import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.text.style.TypefaceSpan
 import android.text.style.UnderlineSpan
@@ -18,16 +23,18 @@ class StaticTextActivity : AppCompatActivity() {
 
         val custom = MODE_CUSTOM("\\sAndroid\\b", "\\smobile\\b")
         autoLinkTextView.addAutoLinkMode(
-                MODE_HASHTAG,
-                MODE_EMAIL,
-                MODE_URL,
-                MODE_PHONE,
-                custom,
-                MODE_MENTION)
+            MODE_HASHTAG,
+            MODE_EMAIL,
+            MODE_URL,
+            MODE_PHONE,
+            custom,
+            MODE_MENTION
+        )
 
         autoLinkTextView.addUrlTransformations(
-                "https://en.wikipedia.org/wiki/Wear_OS" to "Wear OS",
-                "https://en.wikipedia.org/wiki/Fire_OS" to "FIRE")
+            "https://en.wikipedia.org/wiki/Wear_OS" to "Wear OS",
+            "https://en.wikipedia.org/wiki/Fire_OS" to "FIRE"
+        )
 
         autoLinkTextView.attachUrlProcessor {
             when {
@@ -47,7 +54,13 @@ class StaticTextActivity : AppCompatActivity() {
         autoLinkTextView.mentionModeColor = ContextCompat.getColor(this, R.color.color6)
         autoLinkTextView.emailModeColor = ContextCompat.getColor(this, R.color.colorPrimary)
 
-        autoLinkTextView.text = getString(R.string.android_text)
+        val spannableString = SpannableString(getString(R.string.android_text)).apply {
+            this.setSpan(StyleSpan(Typeface.BOLD), 0, 200, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            this.setSpan(ForegroundColorSpan(Color.RED), 0, 200, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        val builder = SpannableStringBuilder(spannableString)
+        builder.delete(0,10)
+        autoLinkTextView.text = builder
 
         autoLinkTextView.onAutoLinkClick {
             val message = if (it.originalText == it.transformedText) it.originalText

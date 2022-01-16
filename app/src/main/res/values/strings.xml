@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">AutoLinkTextView</string>
-    <string name="android_text">Android is a mobile operating system developed by https://google.com.
+    <string name="android_text">https://en.wikipedia.org/wiki/Fire_OS 维基百科 Android is a mobile operating system developed by https://google.com.
             It is based on a modified version of the @Linux kernel and other open source software,
             and is designed @primarily for touchscreen mobile devices such as smartphones and #tablets.
             In addition, https://githttps://github.com/armcha/AutoLinkTextViewV2.github.com/armcha/AutoLinkTextViewV2 has developed Android TV for televisions, Android Auto for cars
@@ -27,7 +27,7 @@
             This includes core apps such as Gmail chatikyana@gmail.com.
 
     </string>
-    <string name="android_text_short_second">https://www.baidu.com The application store/digital +37493023017 distribution
+    <string name="android_text_short_second">&#160;&#160;&#160;&#160;&#160;&#160;&#160;https://www.baidu.com The application store/digital +37493023017 distribution
             platform Google @Play and associated Google Play Services development platform,
             and usually includes the Google #Chrome web browser and Google @Search app.
             These apps are licensed by manufacturers of Android devices certified under standards sample@android.com imposed by Google,
