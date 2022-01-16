@@ -1,16 +1,18 @@
 package io.github.armcha.autolink
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
-import android.text.DynamicLayout
+import android.text.Selection
+import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-import android.text.StaticLayout
 import android.text.style.CharacterStyle
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
-import java.lang.reflect.Field
+import androidx.core.text.toSpannable
 
 class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView(context, attrs) {
 
@@ -27,7 +29,6 @@ class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView
     private var onAutoLinkClick: ((AutoLinkItem) -> Unit)? = null
     private var urlProcessor: ((String) -> String)? = null
 
-    var pressedTextColor = Color.LTGRAY
     var mentionModeColor = DEFAULT_COLOR
     var hashTagModeColor = DEFAULT_COLOR
     var customModeColor = DEFAULT_COLOR
@@ -37,10 +38,10 @@ class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView
 
     init {
         highlightColor = Color.TRANSPARENT
-        movementMethod = LinkTouchMovementMethod()
         notConsumeTouchEvent()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun setText(text: CharSequence, type: BufferType) {
         if (text.isEmpty() || modes.isNullOrEmpty()) {
             super.setText(text, type)
@@ -48,6 +49,7 @@ class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView
         }
         val spannableString = makeSpannableString(text)
         super.setText(spannableString, type)
+        this.setOnTouchListener(TouchTextView(this.text.toSpannable()))
     }
 
     fun addAutoLinkMode(vararg modes: Mode) {
@@ -79,7 +81,7 @@ class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView
             val mode = autoLinkItem.mode
             val currentColor = getColorByMode(mode)
 
-            val clickableSpan = object : TouchableSpan(currentColor, pressedTextColor) {
+            val clickableSpan = object : TouchableSpan(currentColor) {
                 override fun onClick(widget: View) {
                     onAutoLinkClick?.invoke(autoLinkItem)
                 }
@@ -190,19 +192,52 @@ class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView
         }
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        var field: Field? = null
-        val staticField = DynamicLayout::class.java.getDeclaredField("sStaticLayout")
-        staticField.isAccessible = true
-        val layout: StaticLayout? = staticField.get(DynamicLayout::class.java) as? StaticLayout?
-        if (layout != null) {
-            field = StaticLayout::class.java.getDeclaredField("mMaximumVisibleLineCount")
-            field.isAccessible = true
-            field.setInt(layout, maxLines)
+    internal open class TouchTextView(var spannable: Spannable) : OnTouchListener {
+        @SuppressLint("ClickableViewAccessibility")
+        override fun onTouch(v: View, event: MotionEvent): Boolean {
+            val action = event.action
+            if (v !is TextView) {
+                return false
+            }
+            if (action == MotionEvent.ACTION_UP ||
+                action == MotionEvent.ACTION_DOWN
+            ) {
+                val link = getPressedSpan(event, v)
+                if (link.isNotEmpty()) {
+                    if (action == MotionEvent.ACTION_UP) {
+                        link[0].onClick(v)
+                    } else if (action == MotionEvent.ACTION_DOWN) {
+                        Selection.setSelection(
+                            spannable,
+                            spannable.getSpanStart(link[0]),
+                            spannable.getSpanEnd(link[0])
+                        )
+                    }
+                    return true
+                } else {
+                    Selection.removeSelection(spannable)
+                }
+            }
+            return false
         }
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        if (layout != null && field != null) {
-            field.setInt(layout, Integer.MAX_VALUE)
+
+        private fun getPressedSpan(
+            event: MotionEvent,
+            textView: TextView
+        ): Array<out TouchableSpan> {
+            var x = event.x.toInt()
+            var y = event.y.toInt()
+            x -= textView.totalPaddingLeft
+            y -= textView.totalPaddingTop
+            x += textView.scrollX
+            y += textView.scrollY
+            val layout = textView.layout
+            val line = layout.getLineForVertical(y)
+            val off = layout.getOffsetForHorizontal(line, x.toFloat())
+            return spannable.getSpans(
+                off, off,
+                TouchableSpan::class.java
+            )
         }
     }
 }

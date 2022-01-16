@@ -68,7 +68,9 @@ class RecyclerViewActivity : AppCompatActivity() {
                     else -> R.string.text_third
                 }
 
-                autoLinkTextView.text = getString(text)
+                autoLinkTextView.post {
+                    autoLinkTextView.text = getString(text)
+                }
 
 
                 autoLinkTextView.onAutoLinkClick {

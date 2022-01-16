@@ -53,14 +53,7 @@ class StaticTextActivity : AppCompatActivity() {
         autoLinkTextView.customModeColor = ContextCompat.getColor(this, R.color.color1)
         autoLinkTextView.mentionModeColor = ContextCompat.getColor(this, R.color.color6)
         autoLinkTextView.emailModeColor = ContextCompat.getColor(this, R.color.colorPrimary)
-
-        val spannableString = SpannableString(getString(R.string.android_text)).apply {
-            this.setSpan(StyleSpan(Typeface.BOLD), 0, 200, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            this.setSpan(ForegroundColorSpan(Color.RED), 0, 200, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        }
-        val builder = SpannableStringBuilder(spannableString)
-        builder.delete(0,10)
-        autoLinkTextView.text = builder
+        autoLinkTextView.text = getString(R.string.android_text)
 
         autoLinkTextView.onAutoLinkClick {
             val message = if (it.originalText == it.transformedText) it.originalText
