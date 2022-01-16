@@ -6,8 +6,6 @@ import android.text.style.ClickableSpan
 
 internal abstract class TouchableSpan(private val normalTextColor: Int) : ClickableSpan() {
 
-    var isPressed: Boolean = false
-
     override fun updateDrawState(textPaint: TextPaint) {
         super.updateDrawState(textPaint)
         val textColor = normalTextColor
