@@ -63,8 +63,11 @@ internal class LinkTouchMovementMethod : LinkMovementMethod() {
 
         val layout = textView.layout
         val verticalLine = layout.getLineForVertical(y)
+        val touchLineWidth = layout.getLineWidth(verticalLine)
+        if (x > touchLineWidth) {
+            return null
+        }
         val horizontalOffset = layout.getOffsetForHorizontal(verticalLine, x.toFloat())
-
         val link = spannable.getSpans(horizontalOffset, horizontalOffset, TouchableSpan::class.java)
         return link.getOrNull(0)
     }
