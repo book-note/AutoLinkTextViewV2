@@ -14,7 +14,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.text.toSpannable
 
-class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView(context, attrs) {
+open class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView(context, attrs) {
 
     companion object {
         internal val TAG = AutoLinkTextView::class.java.simpleName
