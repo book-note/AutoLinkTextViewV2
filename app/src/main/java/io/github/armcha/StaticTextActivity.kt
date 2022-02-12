@@ -1,12 +1,7 @@
 package io.github.armcha
 
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.Spanned
-import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.text.style.TypefaceSpan
 import android.text.style.UnderlineSpan
@@ -20,29 +15,11 @@ class StaticTextActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_static_text)
-
         val custom = MODE_CUSTOM("\\sAndroid\\b", "\\smobile\\b")
         autoLinkTextView.addAutoLinkMode(
             MODE_URL
         )
-
-//        autoLinkTextView.addUrlTransformations(
-//            "https://en.wikipedia.org/wiki/Wear_OS" to "Wear OS",
-//            "https://en.wikipedia.org/wiki/Fire_OS" to "FIRE"
-//        )
-//
-//        autoLinkTextView.attachUrlProcessor {
-//            when {
-//                it.contains("google") -> "Google"
-//                it.contains("github") -> "Github"
-//                else -> it
-//            }
-//        }
-
-        val str1 = "\u200D\u200D\u200D\u200Dhttps://www.baidu.com\u200D\u200D\u200D\u200D\u200D\u200D 好好睡据占据句句 https://www.baidu.com 321 呵呵 https://www.baidu.com"
-        val str2 = ":https://\u200D\u200Dwww.baidu.com\n" +
-                "https://\u200D\u200Dwww.baidu.com\n" +
-                "https://\u200D\u200Dwww.baidu.com"
+        val text = "http://mp.weixin.qq.com/s?__biz=MzIzNzA5NjE0Mw==&mid=2653648867&idx=1&sn=af50d0304601c0e71dc3323e1d9ec64d&chksm=f3120a43c4658355ac9c18d86378d699e8275753175af24875e5e1b36af0a16c0ea488419e71#rd"
 
         autoLinkTextView.addSpan(MODE_URL, StyleSpan(Typeface.ITALIC), UnderlineSpan())
         autoLinkTextView.addSpan(MODE_HASHTAG, UnderlineSpan(), TypefaceSpan("monospace"))
@@ -53,7 +30,7 @@ class StaticTextActivity : AppCompatActivity() {
         autoLinkTextView.customModeColor = ContextCompat.getColor(this, R.color.color1)
         autoLinkTextView.mentionModeColor = ContextCompat.getColor(this, R.color.color6)
         autoLinkTextView.emailModeColor = ContextCompat.getColor(this, R.color.colorPrimary)
-        autoLinkTextView.text = str2
+        autoLinkTextView.text = text
 
         autoLinkTextView.onAutoLinkClick {
             val message = if (it.originalText == it.transformedText) it.originalText
