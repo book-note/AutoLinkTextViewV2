@@ -37,7 +37,6 @@ open class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : Tex
     var urlModeColor = DEFAULT_COLOR
 
     init {
-        highlightColor = Color.TRANSPARENT
         notConsumeTouchEvent()
     }
 
