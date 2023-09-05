@@ -14,7 +14,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.text.toSpannable
 
-open class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : TextView(context, attrs) {
+open class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) :
+    TextView(context, attrs) {
 
     companion object {
         internal val TAG = AutoLinkTextView::class.java.simpleName
@@ -145,6 +146,7 @@ open class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : Tex
                                 autoLinkItems.add(item)
                             }
                         }
+
                         else -> {
                             val isUrl = it is MODE_URL
                             if (isUrl) {
@@ -202,16 +204,8 @@ open class AutoLinkTextView(context: Context, attrs: AttributeSet? = null) : Tex
                 if (link != null) {
                     if (action == MotionEvent.ACTION_UP) {
                         link.onClick(v)
-                    } else if (action == MotionEvent.ACTION_DOWN) {
-                        Selection.setSelection(
-                            spannable,
-                            spannable.getSpanStart(link),
-                            spannable.getSpanEnd(link)
-                        )
                     }
                     return true
-                } else {
-                    Selection.removeSelection(spannable)
                 }
             }
             return false
